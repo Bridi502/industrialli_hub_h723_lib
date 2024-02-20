@@ -7,7 +7,6 @@
 
 extern industrialli_ledsHubCtrl ledsCtrl;
 
-
 // Input anlg.
 #define ADC_01 PB1
 #define ADC_02 PC5
@@ -34,7 +33,7 @@ public:
     double getVIN(uint8_t anlgPin);
     double get010V(uint8_t anlgPin);
     double get020mA(uint8_t anlgPin);
-    bool alarm020mA(uint8_t anlgPin, float threshold);
+    bool alarm020mA(float alarm020Val, float threshold);
     int getIntParamVREF(void);
     int getIntParamTSCAL1(void);
     int getIntParamTSCAL2(void);
@@ -58,8 +57,8 @@ private:
     double _VIN[4] = {0.00};
     double _VIN010[4] = {0.00};
     double _AIN020[4] = {0.00};
-
     bool _alarm = false;
+    float _alarm020Val = 0.00;
 };
 
 #endif

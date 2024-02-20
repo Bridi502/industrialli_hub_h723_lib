@@ -1,6 +1,6 @@
 #include "industrialli_digInHub.h"
-
-volatile bool industrialli_digitalInputsHub::_input_00 = false; // interrupt
+// interrupt
+volatile bool industrialli_digitalInputsHub::_input_00 = false;
 volatile bool industrialli_digitalInputsHub::_input_01 = false;
 volatile bool industrialli_digitalInputsHub::_input_02 = false;
 volatile bool industrialli_digitalInputsHub::_input_03 = false;
@@ -8,6 +8,23 @@ volatile bool industrialli_digitalInputsHub::_input_04 = false;
 volatile bool industrialli_digitalInputsHub::_input_05 = false;
 volatile bool industrialli_digitalInputsHub::_input_06 = false;
 volatile bool industrialli_digitalInputsHub::_input_07 = false;
+volatile int countI01;
+// ENCODER A (I01 - terminal A, I02 - terminal B)
+volatile int _aState_ENCA;
+volatile int _pulses_ENCA;
+volatile bool _rotation_ENCA;
+// ENCODER B (I03 - terminal A, I04 - terminal B)
+volatile int _aState_ENCB;
+volatile int _pulses_ENCB;
+volatile bool _rotation_ENCB;
+// ENCODER C (I05 - terminal A, I06 - terminal B)
+volatile int _aState_ENCC;
+volatile int _pulses_ENCC;
+volatile bool _rotation_ENCC;
+// ENCODER D (I07 - terminal A, I08 - terminal B)
+volatile int _aState_ENCD;
+volatile int _pulses_ENCD;
+volatile bool _rotation_ENCD;
 
 void industrialli_digitalInputsHub::begin()
 {
@@ -23,7 +40,20 @@ void industrialli_digitalInputsHub::begin()
 
   readDigitalInputsStatus();
 }
-void industrialli_digitalInputsHub::readDigitalInputsStatus()
+void industrialli_digitalInputsHub::beginDigitalInput(int inputType1, int inputType2, int inputType3, int inputType4, int inputType5, int inputType6, int inputType7, int inputType8)
+{
+  // NPN Ativado -> LOW(LED APAGADO), Desativado -> HIGH(LED ACESO)
+  // PNP Ativado -> HIGH(LED ACESO), Desativado -> LOW(LED APAGADO)
+  _inputType[0] = inputType1;
+  _inputType[1] = inputType1;
+  _inputType[2] = inputType1;
+  _inputType[3] = inputType1;
+  _inputType[4] = inputType1;
+  _inputType[5] = inputType1;
+  _inputType[6] = inputType1;
+  _inputType[7] = inputType1;
+}
+void industrialli_digitalInputsHub::readDigitalInputsStatus() // Verifica o valor das entradas
 {
   if (digitalRead(EXTI_01) == 1)
   {
@@ -97,8 +127,7 @@ void industrialli_digitalInputsHub::readDigitalInputsStatus()
     _input_07 = true;
   }
 }
-
-bool industrialli_digitalInputsHub::readDigitalInput(uint8_t pin)
+bool industrialli_digitalInputsHub::readDigitalInput(uint8_t pin) // Retorna o valor de uma entrada especifica
 {
   _pin = pin - 1;
   switch (_pin)
@@ -151,8 +180,10 @@ bool industrialli_digitalInputsHub::readDigitalInput(uint8_t pin)
     break;
   }
 }
-void industrialli_digitalInputsHub::updateDigitalInputsLeds()
+void industrialli_digitalInputsHub::updateDigitalInputsLeds() // Atualiza o valor dos LEDs
 {
+  // NPN Ativado -> LOW(LED APAGADO), Desativado -> HIGH(LED ACESO)
+  // PNP Ativado -> HIGH(LED ACESO), Desativado -> LOW(LED APAGADO)
 
   if (_input_00)
   {
@@ -225,4 +256,20 @@ void industrialli_digitalInputsHub::updateDigitalInputsLeds()
   {
     ledsCtrl.ledOff(11);
   }
+}
+int industrialli_digitalInputsHub::getPulsesEncoderA(void) // Retorna o valor dos pulsos do encoder A
+{
+  return _pulses_ENCA;
+}
+bool industrialli_digitalInputsHub::getRotationEncoderA(void) // Retorna a direcao de rotacao do encoder A (VERDADEIRO para o sentido HORARIO)
+{
+  return _rotation_ENCA;
+}
+int industrialli_digitalInputsHub::getCountI01(void)
+{
+  return countI01;
+}
+void industrialli_digitalInputsHub::clearCount01(void)
+{
+  countI01 = 0;
 }
