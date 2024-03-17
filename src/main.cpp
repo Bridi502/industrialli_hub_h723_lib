@@ -7,6 +7,7 @@
 #include "industrialli_anlgInHub.h"
 #include "industrialli_digInHub.h"
 #include "industrialli_pwrStatusHub.h"
+#include "industrialli_dipHub.h"
 #include "ethernet2_testHub.h"
 
 
@@ -16,6 +17,7 @@ industrialli_isoOutHubCtrl isoOutHub;
 industrialli_analogInputsHub anlgInHub;
 industrialli_digitalInputsHub digInHub;
 industrialli_pwrStatusHub pwrStatusHub;
+industrialli_dipHub dipHub;
 
 
 
@@ -34,21 +36,17 @@ void setup()
  
   ledsCtrl.begin();
   isoOutHub.begin();
+  anlgInHub.begin();
+  digInHub.begin();
+  pwrStatusHub.begin();
+  dipHub.begin();
+
   isoOutHub.enableOutputs();
   anlgInHub.setAnalogResolution(BITS_16);
-  anlgInHub.begin();
-  pwrStatusHub.begin();
-  digInHub.begin();
+ 
+  
   digInHub.beginDigitalInputCounting(I01, PNP, UP);
-  /*
-    digInHub.beginDigitalInputCounting(I02, PNP, UP);
-  digInHub.beginDigitalInputCounting(I03, PNP, UP);
-  digInHub.beginDigitalInputCounting(I04, PNP, UP);
-  digInHub.beginDigitalInputCounting(I05, PNP, UP);
-  digInHub.beginDigitalInputCounting(I06, PNP, UP);
-  digInHub.beginDigitalInputCounting(I07, PNP, UP);
-  digInHub.beginDigitalInputCounting(I08, PNP, UP);
-  */
+
 
 
 
@@ -76,9 +74,8 @@ void loop()
   // put your main code here, to run repeatedly:
   isoOutHub.getPowerLedsStaus();
   digInHub.updateDigitalInputsLeds();
-  SerialUSB.println(digInHub.getCountVal(I01));
   ledsCtrl.ledsUpdate();
-
+  dipHub.test();
 
 
   }

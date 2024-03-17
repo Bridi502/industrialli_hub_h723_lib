@@ -317,6 +317,7 @@ int industrialli_digitalInputsHub::getCountVal(uint8_t pin)
         break;
 
     default:
+    return -1;
         break;
     }
 }
