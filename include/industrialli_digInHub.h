@@ -69,6 +69,11 @@ public:
     static volatile int _aStateEncoder_I05_A;
     static volatile int _aStateEncoder_I07_A;
 
+    static volatile int _aLastStateEncoder_I01_A;
+    static volatile int _aLastStateEncoder_I03_A;
+    static volatile int _aLastStateEncoder_I05_A;
+    static volatile int _aLastStateEncoder_I07_A;
+
     static volatile int _pulsesEncoder_I01_I02;
     static volatile int _pulsesEncoder_I03_I04;
     static volatile int _pulsesEncoder_I05_I06;
@@ -462,51 +467,132 @@ public:
     // EXTI01 -> ENCODER A
     // EXTI02 -> ENCODER B
 
-    static void beginEncoder_I01_A_Falling_00() // Encoder A PNP
+    static void beginEncoder_I01_A_Falling() // Encoder A PNP
     {
-        pinMode(EXTI_01, INPUT);
-        attachInterrupt(digitalPinToInterrupt(EXTI_01), Encoder_I01_A_00, FALLING);
+        attachInterrupt(digitalPinToInterrupt(EXTI_01), Encoder_I01_A, FALLING);
     }
-    static void Encoder_I01_A_00(void)
+    static void Encoder_I01_A(void)
     {
         noInterrupts();
-        _input_00 = !_input_00;
-
-        // encoder
+        _input_00 = digitalRead(EXTI_01);
         _aStateEncoder_I01_A = _input_00;
-        if (digitalRead(_input_01) != _aStateEncoder_I01_A)
+        _input_01 = digitalRead(EXTI_02);
+
+        if (_input_01 != _aStateEncoder_I01_A)
         {
-            _pulsesEncoder_I01_I02++;
+            _pulsesEncoder_I01_I02++; // CW
         }
         else
         {
-            _pulsesEncoder_I01_I02--;
+            _pulsesEncoder_I01_I02--; // CCW
         }
+
         interrupts();
     }
 
+    /////////////////////////////////////////////////// ENCODER EXTI03 & EXTI04 //////////////////////////////////////////////////////////////////
+    // EXTI03 -> ENCODER A
+    // EXTI04 -> ENCODER B
 
+    static void beginEncoder_I03_A_Falling() // Encoder A PNP
+    {
+        attachInterrupt(digitalPinToInterrupt(EXTI_03), Encoder_I03_A, FALLING);
+    }
+    static void Encoder_I03_A(void)
+    {
+        noInterrupts();
+        _input_02 = digitalRead(EXTI_03);
+        _aStateEncoder_I03_A = _input_02;
+        _input_03 = digitalRead(EXTI_04);
 
+        if (_input_03 != _aStateEncoder_I03_A)
+        {
+            _pulsesEncoder_I03_I04++; // CW
+        }
+        else
+        {
+            _pulsesEncoder_I03_I04--; // CCW
+        }
+
+        interrupts();
+    }
+
+    /////////////////////////////////////////////////// ENCODER EXTI05 & EXTI06 //////////////////////////////////////////////////////////////////
+    // EXTI05 -> ENCODER A
+    // EXTI06 -> ENCODER B
+
+    static void beginEncoder_I05_A_Falling() // Encoder A PNP
+    {
+        attachInterrupt(digitalPinToInterrupt(EXTI_05), Encoder_I05_A, FALLING);
+    }
+    static void Encoder_I05_A(void)
+    {
+        noInterrupts();
+        _input_04 = digitalRead(EXTI_05);
+        _aStateEncoder_I05_A = _input_04;
+        _input_05 = digitalRead(EXTI_06);
+
+        if (_input_05 != _aStateEncoder_I05_A)
+        {
+            _pulsesEncoder_I05_I06++; // CW
+        }
+        else
+        {
+            _pulsesEncoder_I05_I06--; // CCW
+        }
+
+        interrupts();
+    }
+
+    /////////////////////////////////////////////////// ENCODER EXTI07 & EXTI08 //////////////////////////////////////////////////////////////////
+    // EXTI07 -> ENCODER A
+    // EXTI08 -> ENCODER B
+
+    static void beginEncoder_I07_A_Falling() // Encoder A PNP
+    {
+        attachInterrupt(digitalPinToInterrupt(EXTI_07), Encoder_I07_A, FALLING);
+    }
+    static void Encoder_I07_A(void)
+    {
+        noInterrupts();
+        _input_06 = digitalRead(EXTI_07);
+        _aStateEncoder_I07_A = _input_06;
+        _input_07 = digitalRead(EXTI_08);
+
+        if (_input_07 != _aStateEncoder_I07_A)
+        {
+            _pulsesEncoder_I07_I08++; // CW
+        }
+        else
+        {
+            _pulsesEncoder_I07_I08--; // CCW
+        }
+
+        interrupts();
+    }
+    void begin(void);
     void updateDigitalInputsLeds();                                                                            // Atualiza os valores dos LEDs
     void beginEncoder(uint8_t encoder, bool sensorType);                                                       // Inicia o encoder
     int getPulsesEncoder(uint8_t encoder);                                                                     // Retorna o valor dos pulos do encoder selecionado
     void beginDigitalInputCounting(uint8_t pin, bool sensorType, bool upOrDown);                               // Retorna a contagem da entrada selecionada
+    int getCountVal(uint8_t pin);
     void clearCount(uint8_t pin);                                                                              // Limpa o valor da contagem na entrada
     void beginUserDigitalInput(uint8_t pin, callback_function_t userFunction, uint32_t mode, bool sensorType); // inicia a entrada selecionada para chamar a funcao do usuario
     void initTestInterrupts();
     void testDigitalInputs();
+    void allLedsOff();
 
 private:
     uint8_t _pin;
     uint8_t _ledStatus[8] = {
-        _ledStatus[0],
-        _ledStatus[1],
-        _ledStatus[2],
-        _ledStatus[3],
-        _ledStatus[4],
-        _ledStatus[5],
-        _ledStatus[6],
-        _ledStatus[7]};
+        _ledStatus[0] = 1,
+        _ledStatus[1] = 1,
+        _ledStatus[2] = 1,
+        _ledStatus[3] = 1,
+        _ledStatus[4] = 1,
+        _ledStatus[5] = 1,
+        _ledStatus[6] = 1,
+        _ledStatus[7] = 1};
 
     int _inputType[8] = {
         _inputType[0] = -1,
@@ -520,14 +606,14 @@ private:
 
     };
     uint8_t _sensorType[8] = {
-        _sensorType[0],
-        _sensorType[1],
-        _sensorType[2],
-        _sensorType[3],
-        _sensorType[4],
-        _sensorType[5],
-        _sensorType[6],
-        _sensorType[7],
+        _sensorType[0] = PNP,
+        _sensorType[1] = PNP,
+        _sensorType[2] = PNP,
+        _sensorType[3] = PNP,
+        _sensorType[4] = PNP,
+        _sensorType[5] = PNP,
+        _sensorType[6] = PNP,
+        _sensorType[7] = PNP
     };
 
     uint8_t _encoder;

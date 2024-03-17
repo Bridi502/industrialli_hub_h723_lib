@@ -3,16 +3,16 @@ uint32_t _userMode;
 
 callback_function_t _userFunction;
 
-volatile int _count_00;
-volatile int _count_01;
-volatile int _count_02;
-volatile int _count_03;
-volatile int _count_04;
-volatile int _count_05;
-volatile int _count_06;
-volatile int _count_07;
+volatile int industrialli_digitalInputsHub::_count_00;
+volatile int industrialli_digitalInputsHub::_count_01;
+volatile int industrialli_digitalInputsHub::_count_02;
+volatile int industrialli_digitalInputsHub::_count_03;
+volatile int industrialli_digitalInputsHub::_count_04;
+volatile int industrialli_digitalInputsHub::_count_05;
+volatile int industrialli_digitalInputsHub::_count_06;
+volatile int industrialli_digitalInputsHub::_count_07;
 
-volatile bool _upOrDown;
+volatile bool industrialli_digitalInputsHub::_upOrDown;
 // interrupt
 volatile bool industrialli_digitalInputsHub::_input_00 = false;
 volatile bool industrialli_digitalInputsHub::_input_01 = false;
@@ -25,20 +25,25 @@ volatile bool industrialli_digitalInputsHub::_input_07 = false;
 
 // ENCODER
 
-volatile int _aStateEncoder_I01_A;
-volatile int _aStateEncoder_I03_A;
-volatile int _aStateEncoder_I05_A;
-volatile int _aStateEncoder_I07_A;
+volatile int industrialli_digitalInputsHub::_aStateEncoder_I01_A;
+volatile int industrialli_digitalInputsHub::_aStateEncoder_I03_A;
+volatile int industrialli_digitalInputsHub::_aStateEncoder_I05_A;
+volatile int industrialli_digitalInputsHub::_aStateEncoder_I07_A;
 
-volatile int _pulsesEncoder_I01_I02;
-volatile int _pulsesEncoder_I03_I04;
-volatile int _pulsesEncoder_I05_I06;
-volatile int _pulsesEncoder_I07_I08;
+volatile int industrialli_digitalInputsHub::_aLastStateEncoder_I01_A;
+volatile int industrialli_digitalInputsHub::_aLastStateEncoder_I03_A;
+volatile int industrialli_digitalInputsHub::_aLastStateEncoder_I05_A;
+volatile int industrialli_digitalInputsHub::_aLastStateEncoder_I07_A;
 
-volatile bool _rotationEncoder_I01_I02;
-volatile bool _rotationEncoder_I03_I04;
-volatile bool _rotationEncoder_I05_I06;
-volatile bool _rotationEncoder_I07_I08;
+volatile int industrialli_digitalInputsHub::_pulsesEncoder_I01_I02;
+volatile int industrialli_digitalInputsHub::_pulsesEncoder_I03_I04;
+volatile int industrialli_digitalInputsHub::_pulsesEncoder_I05_I06;
+volatile int industrialli_digitalInputsHub::_pulsesEncoder_I07_I08;
+
+volatile bool industrialli_digitalInputsHub::_rotationEncoder_I01_I02;
+volatile bool industrialli_digitalInputsHub::_rotationEncoder_I03_I04;
+volatile bool industrialli_digitalInputsHub::_rotationEncoder_I05_I06;
+volatile bool industrialli_digitalInputsHub::_rotationEncoder_I07_I08;
 
 void testFunction()
 {
@@ -88,6 +93,27 @@ void industrialli_digitalInputsHub::updateDigitalInputsLeds() // Atualiza o valo
         }
     }
 }
+
+void industrialli_digitalInputsHub::begin(void)
+{
+    pinMode(EXTI_01, INPUT);
+    pinMode(EXTI_02, INPUT);
+    pinMode(EXTI_03, INPUT);
+    pinMode(EXTI_04, INPUT);
+    pinMode(EXTI_05, INPUT);
+    pinMode(EXTI_06, INPUT);
+    pinMode(EXTI_07, INPUT);
+    pinMode(EXTI_08, INPUT);
+    allLedsOff();
+}
+void industrialli_digitalInputsHub::allLedsOff()
+{
+    for (int i = 0; i < 8; i++)
+    {
+        _sensorType[i] = PNP;
+        ledsCtrl.ledOff(4 + i);
+    }
+}
 void industrialli_digitalInputsHub::beginEncoder(uint8_t encoder, bool sensorType)
 {
     _encoder = encoder;
@@ -96,28 +122,40 @@ void industrialli_digitalInputsHub::beginEncoder(uint8_t encoder, bool sensorTyp
         switch (_encoder)
         {
         case 0:
+            pinMode(EXTI_01, INPUT);
+            pinMode(EXTI_02, INPUT);
             _sensorType[0] = sensorType;
             _sensorType[1] = sensorType;
             _input_00 = digitalRead(EXTI_01);
-            beginEncoder_I01_A_Falling_00();
+            _input_01 = digitalRead(EXTI_02);
+            beginEncoder_I01_A_Falling();
             break;
         case 1:
+            pinMode(EXTI_03, INPUT);
+            pinMode(EXTI_04, INPUT);
             _sensorType[2] = sensorType;
             _sensorType[3] = sensorType;
             _input_02 = digitalRead(EXTI_03);
-            // beginEncoder_I03_A_Falling_00();
+            _input_02 = digitalRead(EXTI_04);
+            beginEncoder_I03_A_Falling();
             break;
         case 2:
+            pinMode(EXTI_05, INPUT);
+            pinMode(EXTI_06, INPUT);
             _sensorType[4] = sensorType;
             _sensorType[5] = sensorType;
             _input_04 = digitalRead(EXTI_05);
-            // beginEncoder_I05_A_Falling_00();
+            _input_02 = digitalRead(EXTI_06);
+            beginEncoder_I05_A_Falling();
             break;
         case 3:
+            pinMode(EXTI_07, INPUT);
+            pinMode(EXTI_08, INPUT);
             _sensorType[6] = sensorType;
             _sensorType[7] = sensorType;
             _input_06 = digitalRead(EXTI_07);
-            // beginEncoder_I07_A_Falling_00();
+            _input_02 = digitalRead(EXTI_08);
+            beginEncoder_I07_A_Falling();
             break;
 
         default:
@@ -248,7 +286,40 @@ void industrialli_digitalInputsHub::beginDigitalInputCounting(uint8_t pin, bool 
         break;
     }
 }
+int industrialli_digitalInputsHub::getCountVal(uint8_t pin)
+{
+    _pin = pin - 1;
+    switch (_pin)
+    {
+    case 0:
+        return _count_00;
+        break;
+    case 1:
+        return _count_01;
+        break;
+    case 2:
+        return _count_02;
+        break;
+    case 3:
+        return _count_03;
+        break;
+    case 4:
+        return _count_04;
+        break;
+    case 5:
+        return _count_05;
+        break;
+    case 6:
+        return _count_06;
+        break;
+    case 7:
+        return _count_07;
+        break;
 
+    default:
+        break;
+    }
+}
 void industrialli_digitalInputsHub::clearCount(uint8_t pin)
 {
     _pin = pin - 1;

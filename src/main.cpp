@@ -38,6 +38,20 @@ void setup()
   anlgInHub.setAnalogResolution(BITS_16);
   anlgInHub.begin();
   pwrStatusHub.begin();
+  digInHub.begin();
+  digInHub.beginDigitalInputCounting(I01, PNP, UP);
+  /*
+    digInHub.beginDigitalInputCounting(I02, PNP, UP);
+  digInHub.beginDigitalInputCounting(I03, PNP, UP);
+  digInHub.beginDigitalInputCounting(I04, PNP, UP);
+  digInHub.beginDigitalInputCounting(I05, PNP, UP);
+  digInHub.beginDigitalInputCounting(I06, PNP, UP);
+  digInHub.beginDigitalInputCounting(I07, PNP, UP);
+  digInHub.beginDigitalInputCounting(I08, PNP, UP);
+  */
+
+
+
  
   anlgInHub.setReadMode(A01, READ_020);
   anlgInHub.setReadMode(A02, READ_020);
@@ -62,6 +76,7 @@ void loop()
   // put your main code here, to run repeatedly:
   isoOutHub.getPowerLedsStaus();
   digInHub.updateDigitalInputsLeds();
+  SerialUSB.println(digInHub.getCountVal(I01));
   ledsCtrl.ledsUpdate();
 
 
