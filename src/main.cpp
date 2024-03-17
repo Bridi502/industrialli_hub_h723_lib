@@ -5,18 +5,18 @@
 #include "industrialli_isoOutHub.h"
 #include "industrialli_ledsHub.h"
 #include "industrialli_anlgInHub.h"
-//#include "industrialli_digInHub.h"
+#include "industrialli_digInHub.h"
 #include "industrialli_pwrStatusHub.h"
 #include "ethernet2_testHub.h"
 
-#include "industrialli_digitalInputsHub.h"
+
 
 industrialli_ledsHubCtrl ledsCtrl;
 industrialli_isoOutHubCtrl isoOutHub;
 industrialli_analogInputsHub anlgInHub;
-//industrialli_digitalInputsHub digInHub;
+industrialli_digitalInputsHub digInHub;
 industrialli_pwrStatusHub pwrStatusHub;
-industrialli_digitalIsolatedInputsHub digInHub;
+
 
 
 #define W5500_RST PD7
@@ -45,11 +45,8 @@ void setup()
   isoOutHub.disableOutputs();
   anlgInHub.setAnalogResolution(BITS_16);
   anlgInHub.begin();
-  //digInHub.begin();
   pwrStatusHub.begin();
-  digInHub.beginDigitalInputI01(ledOn,FALLING,NPN);
-
-
+ 
   anlgInHub.setReadMode(A01, READ_020);
   anlgInHub.setReadMode(A02, READ_020);
   anlgInHub.setReadMode(A03, READ_020);
