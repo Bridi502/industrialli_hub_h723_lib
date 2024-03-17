@@ -98,7 +98,7 @@ int industrialli_digitalInputsHub::getPulsesEncoder(uint8_t encoder)
     // ENCODER_03_04 1
     // ENCODER_05_06 2
     // ENCODER_07_08 3
-    
+
     switch (_encoder)
     {
     case 0:
@@ -115,6 +115,7 @@ int industrialli_digitalInputsHub::getPulsesEncoder(uint8_t encoder)
         break;
 
     default:
+    return -1;
         break;
     }
 }
