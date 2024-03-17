@@ -1,7 +1,7 @@
 #include "industrialli_anlgInHub.h"
 
-void industrialli_analogInputsHub::begin(void)// Inicia as entradas analogicas e seta para a leitura de 0-10V
-{ 
+void industrialli_analogInputsHub::begin(void) // Inicia as entradas analogicas e seta para a leitura de 0-10V
+{
 
     pinMode(ADC_01, INPUT);
     pinMode(ADC_02, INPUT);
@@ -19,8 +19,32 @@ void industrialli_analogInputsHub::begin(void)// Inicia as entradas analogicas e
     digitalWrite(ANLG_SEL_03, LOW);
     digitalWrite(ANLG_SEL_04, LOW);
 
-    analogReadResolution(12);
+    analogReadResolution(_anlgRes);
     getIntParamVREF();
+}
+void industrialli_analogInputsHub::setAnalogResolution(int anlgRes){
+    switch (anlgRes)
+    {
+    case 8:
+        _anlgRes = 8; //8bits
+        _bitsADC = 255; //256bits - 1bit
+        break;
+         case 10:
+        _anlgRes = 10; //10bits
+        _bitsADC = 1023; //1024bits - 1bit
+        break;
+         case 12:
+        _anlgRes = 12; //12bits
+        _bitsADC = 4095; //4096bits - 1bit 
+        break;
+         case 16:
+        _anlgRes = 16; //16bits
+        _bitsADC = 65535; //65536bits - 1bit
+        break;
+    
+    default:
+        break;
+    }
 }
 void industrialli_analogInputsHub::setReadMode(uint8_t anlgPin, uint8_t readMode) // Seta o modo de leitura (HIGH->0-20mA ou LOW->0-10V)
 {
@@ -83,8 +107,8 @@ void industrialli_analogInputsHub::setReadMode(uint8_t anlgPin, uint8_t readMode
         }
     }
 }
-int industrialli_analogInputsHub::readRawInput(uint8_t anlgPin)//Retorna o valor em bits da entrada selecionada
-{ 
+int industrialli_analogInputsHub::readRawInput(uint8_t anlgPin) // Retorna o valor em bits da entrada selecionada
+{
 
     _anlgPin = anlgPin;
 
@@ -113,35 +137,36 @@ int industrialli_analogInputsHub::readRawInput(uint8_t anlgPin)//Retorna o valor
 
     return _VIN_RAW[_pin];
 }
-int industrialli_analogInputsHub::getVRefRaw(void)//Obtem o valor da leitura da tensao de referencia interna
+int industrialli_analogInputsHub::getVRefRaw(void) // Obtem o valor da leitura da tensao de referencia interna
 {
-    
+
     _VREF_RAW = analogRead(AVREF);
     return _VREF_RAW;
 }
-double industrialli_analogInputsHub::getVIN(uint8_t anlgPin)//Obtem a tensao em [V] na entrada selecionada
+double industrialli_analogInputsHub::getVIN(uint8_t anlgPin) // Obtem a tensao em [V] na entrada selecionada
 {
     _anlgPin = anlgPin;
-    _VDDA = (_VREF_INTERNAL * _bitsADC) / getVRefRaw(); //Obtem o valor de VDDA
+    _VDDA = (_VREF_INTERNAL * _bitsADC) / getVRefRaw(); // Obtem o valor de VDDA
     _VIN[_anlgPin] = _VDDA / _bitsADC * readRawInput(_anlgPin);
     return _VIN[_anlgPin];
 }
-double industrialli_analogInputsHub::get010V(uint8_t anlgPin)//Obtem a tensao de 0-10V na entrada selecionada
+double industrialli_analogInputsHub::get010V(uint8_t anlgPin) // Obtem a tensao de 0-10V na entrada selecionada
 {
     _anlgPin = anlgPin;
     _VDDA = (_VREF_INTERNAL * _bitsADC) / getVRefRaw();
     _VIN010[_anlgPin] = getVIN(_anlgPin) * (10.00 / _VDDA);
     return _VIN010[_anlgPin];
 }
-double industrialli_analogInputsHub::get020mA(uint8_t anlgPin)//Obtem  a corrente de 0-20mA na entrada selecionada
-{ 
+double industrialli_analogInputsHub::get020mA(uint8_t anlgPin) // Obtem  a corrente de 0-20mA na entrada selecionada
+{
     _anlgPin = anlgPin;
     _VDDA = (_VREF_INTERNAL * _bitsADC) / getVRefRaw();
     _AIN020[_anlgPin] = getVIN(_anlgPin) * (20.00 / _VDDA);
     return _AIN020[_anlgPin];
 }
-bool industrialli_analogInputsHub::alarm020mA(float alarm020Val, float threshold)//Alerta de falha para leitura 0-20mA (retorna VERDADEIRO para falha)
-{  _alarm020Val = alarm020Val;
+bool industrialli_analogInputsHub::alarm020mA(float alarm020Val, float threshold) // Alerta de falha para leitura 0-20mA (retorna VERDADEIRO para falha)
+{
+    _alarm020Val = alarm020Val;
     if (_alarm020Val < threshold)
     {
         _alarm = true;
@@ -152,23 +177,47 @@ bool industrialli_analogInputsHub::alarm020mA(float alarm020Val, float threshold
     }
     return _alarm;
 }
-int industrialli_analogInputsHub::getIntParamVREF(void)//Obtem o valor da referencia interna
+int industrialli_analogInputsHub::getIntParamVREF(void) // Obtem o valor da referencia interna
 {
-    _VREFINT = *((unsigned short *)0x1FF1E860);//VDDA = 3.3V@30degreeC
+    _VREFINT = *((unsigned short *)0x1FF1E860); // VDDA = 3.3V@30degreeC
     _VREF_INTERNAL = _VREFINT;
 
     return _VREFINT;
 }
-int industrialli_analogInputsHub::getIntParamTSCAL1(void)//Obtem TS_CAL1
+int industrialli_analogInputsHub::getIntParamTSCAL1(void) // Obtem TS_CAL1
 {
 
     _TS_CAL1 = *((unsigned short *)0x1FF1E820); // TEMP_RAW1 = 3.3V@30degreeC
 
     return _TS_CAL1;
 }
-int industrialli_analogInputsHub::getIntParamTSCAL2(void)//Obtem TS_CAL2
+int industrialli_analogInputsHub::getIntParamTSCAL2(void) // Obtem TS_CAL2
 {
 
     _TS_CAL2 = *((unsigned short *)0x1FF1E840); // TEMP_RAW2 = 3.3V@130degreeC
     return _TS_CAL2;
+}
+void industrialli_analogInputsHub::test010V()
+{
+    SerialUSB.print(get010V(A01), 4);
+    SerialUSB.print(" ");
+    SerialUSB.print(get010V(A02), 4);
+    SerialUSB.print(" ");
+    SerialUSB.print(get010V(A03), 4);
+    SerialUSB.print(" ");
+    SerialUSB.print(get010V(A04), 4);
+    SerialUSB.println();
+
+}
+void industrialli_analogInputsHub::test020mA()
+{
+
+    SerialUSB.print(get020mA(A01), 4);
+    SerialUSB.print(" ");
+    SerialUSB.print(get020mA(A02), 4);
+    SerialUSB.print(" ");
+    SerialUSB.print(get020mA(A03), 4);
+    SerialUSB.print(" ");
+    SerialUSB.println(get020mA(A04), 4);
+    SerialUSB.println();
 }

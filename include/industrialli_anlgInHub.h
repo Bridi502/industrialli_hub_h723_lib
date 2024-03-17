@@ -23,10 +23,16 @@ extern industrialli_ledsHubCtrl ledsCtrl;
 #define A03 2
 #define A04 3
 
+#define BITS_8 8
+#define BITS_10 10
+#define BITS_12 12
+#define BITS_16 16
+
 class industrialli_analogInputsHub
 {
 public:
     void begin(void);
+    void setAnalogResolution(int anlgRes);
     void setReadMode(uint8_t anlgPin, uint8_t readMode);
     int readRawInput(uint8_t anlgPin);
     int getVRefRaw(void);
@@ -37,8 +43,11 @@ public:
     int getIntParamVREF(void);
     int getIntParamTSCAL1(void);
     int getIntParamTSCAL2(void);
+    void test010V(); //SerialUSB print da leitura das entradas analogicas 0-10V
+    void test020mA(); //SerialUSB print da leitura das entradas analogicas 0-20mA
 
 private:
+    uint8_t _anlgRes = 12;
     uint8_t _anlgPin;
     uint8_t _pin;
     uint8_t _readMode;
