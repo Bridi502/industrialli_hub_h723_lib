@@ -283,7 +283,3 @@ void industrialli_digitalIsolatedInputsHub::beginDigitalInputI01(callback_functi
     _sensorType = sensorType; 
     beginUserInterruptInput_00();
 }
-void industrialli_digitalIsolatedInputsHub::beginUserInputI01()
-{
-   
-}
