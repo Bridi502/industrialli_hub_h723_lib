@@ -64,10 +64,10 @@ public:
     static volatile int _count_06;
     static volatile int _count_07;
 
-    static volatile int _aStateEncoder_I01_I02;
-    static volatile int _aStateEncoder_I03_I04;
-    static volatile int _aStateEncoder_I05_I06;
-    static volatile int _aStateEncoder_I07_I08;
+    static volatile int _aStateEncoder_I01_A;
+    static volatile int _aStateEncoder_I03_A;
+    static volatile int _aStateEncoder_I05_A;
+    static volatile int _aStateEncoder_I07_A;
 
     static volatile int _pulsesEncoder_I01_I02;
     static volatile int _pulsesEncoder_I03_I04;
@@ -462,19 +462,19 @@ public:
     // EXTI01 -> ENCODER A
     // EXTI02 -> ENCODER B
 
-    static void beginEncoder_I01_I02_Falling_00() // Encoder PNP
+    static void beginEncoder_I01_A_Falling_00() // Encoder A PNP
     {
         pinMode(EXTI_01, INPUT);
-        attachInterrupt(digitalPinToInterrupt(EXTI_01), Encoder_I01_I02__00, FALLING);
+        attachInterrupt(digitalPinToInterrupt(EXTI_01), Encoder_I01_A_00, FALLING);
     }
-    static void Encoder_I01_I02__00(void)
+    static void Encoder_I01_A_00(void)
     {
         noInterrupts();
         _input_00 = !_input_00;
 
         // encoder
-        _aStateEncoder_I01_I02 = _input_00;
-        if (_input_01 != _aStateEncoder_I01_I02)
+        _aStateEncoder_I01_A = _input_00;
+        if (digitalRead(_input_01) != _aStateEncoder_I01_A)
         {
             _pulsesEncoder_I01_I02++;
         }
@@ -484,6 +484,8 @@ public:
         }
         interrupts();
     }
+
+
 
     void updateDigitalInputsLeds();                                                                            // Atualiza os valores dos LEDs
     void beginEncoder(uint8_t encoder, bool sensorType);                                                       // Inicia o encoder

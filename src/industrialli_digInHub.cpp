@@ -25,10 +25,10 @@ volatile bool industrialli_digitalInputsHub::_input_07 = false;
 
 // ENCODER
 
-volatile int _aStateEncoder_I01_I02;
-volatile int _aStateEncoder_I03_I04;
-volatile int _aStateEncoder_I05_I06;
-volatile int _aStateEncoder_I07_I08;
+volatile int _aStateEncoder_I01_A;
+volatile int _aStateEncoder_I03_A;
+volatile int _aStateEncoder_I05_A;
+volatile int _aStateEncoder_I07_A;
 
 volatile int _pulsesEncoder_I01_I02;
 volatile int _pulsesEncoder_I03_I04;
@@ -90,6 +90,39 @@ void industrialli_digitalInputsHub::updateDigitalInputsLeds() // Atualiza o valo
 }
 void industrialli_digitalInputsHub::beginEncoder(uint8_t encoder, bool sensorType)
 {
+    _encoder = encoder;
+
+    if (sensorType == PNP)
+        switch (_encoder)
+        {
+        case 0:
+            _sensorType[0] = sensorType;
+            _sensorType[1] = sensorType;
+            _input_00 = digitalRead(EXTI_01);
+            beginEncoder_I01_A_Falling_00();
+            break;
+        case 1:
+            _sensorType[2] = sensorType;
+            _sensorType[3] = sensorType;
+            _input_02 = digitalRead(EXTI_03);
+            // beginEncoder_I03_A_Falling_00();
+            break;
+        case 2:
+            _sensorType[4] = sensorType;
+            _sensorType[5] = sensorType;
+            _input_04 = digitalRead(EXTI_05);
+            // beginEncoder_I05_A_Falling_00();
+            break;
+        case 3:
+            _sensorType[6] = sensorType;
+            _sensorType[7] = sensorType;
+            _input_06 = digitalRead(EXTI_07);
+            // beginEncoder_I07_A_Falling_00();
+            break;
+
+        default:
+            break;
+        }
 }
 int industrialli_digitalInputsHub::getPulsesEncoder(uint8_t encoder)
 {
@@ -115,7 +148,7 @@ int industrialli_digitalInputsHub::getPulsesEncoder(uint8_t encoder)
         break;
 
     default:
-    return -1;
+        return -1;
         break;
     }
 }
