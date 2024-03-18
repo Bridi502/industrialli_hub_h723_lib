@@ -184,22 +184,22 @@ void industrialli_isoOutHubCtrl::getIsoOutLedsStatus(uint8_t led, uint8_t onOff)
     case 10: // Q11
         if (_onOff)
         {
-            ledsCtrl.ledOn(27);
+            ledsCtrl.ledOn(26);
         }
         else
         {
-            ledsCtrl.ledOff(27);
+            ledsCtrl.ledOff(26);
         }
         break;
 
     case 11: // Q12
         if (_onOff)
         {
-            ledsCtrl.ledOn(26);
+            ledsCtrl.ledOn(27);
         }
         else
         {
-            ledsCtrl.ledOff(26);
+            ledsCtrl.ledOff(27);
         }
         break;
 
