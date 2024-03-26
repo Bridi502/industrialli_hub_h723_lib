@@ -8,11 +8,8 @@ foi preciso modificar  o arquivo "RS485.cpp"
 #ifdef RS485_SERIAL_PORT
 RS485Class RS485(RS485_SERIAL_PORT, RS485_DEFAULT_TX_PIN, RS485_DEFAULT_DE_PIN, RS485_DEFAULT_RE_PIN);
 #else
-RS485Class RS485(Serial2, RS485_DEFAULT_TX_PIN, -1, RS485_DEFAULT_RE_PIN);
-RS485Class RS485_MOD(Serial7, RS485_DEFAULT_TX_PIN, -1, RS485_DEFAULT_RE_PIN);
 //RS485Class RS485(SERIAL_PORT_HARDWARE, RS485_DEFAULT_TX_PIN, RS485_DEFAULT_DE_PIN, RS485_DEFAULT_RE_PIN);
 #endif
-
 */
 #include <ArduinoModbus.h>
 #include <HardwareSerial.h>
@@ -45,6 +42,9 @@ industrialli_dipHub dipHub;
 
 HardwareSerial Serial7(RS485_MOD_UART7_RX, RS485_MOD_UART7_TX);
 HardwareSerial Serial2(RS485_USART2_RX, RS485_USART2_TX);
+
+RS485Class RS485(Serial2, RS485_USART2_TX, -1, RS485_USART2_DE);
+RS485Class RS485_MOD(Serial7, RS485_MOD_UART7_TX, -1, RS485_MOD_UART7_DE);
 bool sec = true;
 bool up = true;
 int turnOn = 1;
@@ -61,10 +61,12 @@ void setup()
   Serial7.begin(115200); // RS485
 
   RS485.setPins(RS485_USART2_TX, RS485_USART2_DE, -1);
-  // RS485_MOD.setPins(RS485_MOD_UART7_TX, RS485_MOD_UART7_DE, -1);
+  RS485_MOD.setPins(RS485_MOD_UART7_TX, RS485_MOD_UART7_DE, -1);
 
   RS485.begin(115200);
-  // RS485_MOD.begin(115200);
+  RS485_MOD.begin(115200);
+
+  ModbusRTUClient.begin(115200);
 
   pinMode(DEBUG_LED, OUTPUT);
   pinMode(RS485_TER_SEL, OUTPUT);
@@ -91,7 +93,7 @@ void setup()
     anlgInHub.setReadMode(A04, READ_010);
   */
 
-  MyTim1->setOverflow(100000, MICROSEC_FORMAT);
+  MyTim1->setOverflow(1000000, MICROSEC_FORMAT);
   MyTim1->attachInterrupt(seconds);
   MyTim1->resume();
 }
@@ -104,41 +106,7 @@ void loop()
   ledsCtrl.ledsUpdate();
   dipHub.test();
   digInHub.testDigitalInputs();
-
-  if (turnOn < 18 && up)
-  {
-    if (sec)
-    {
-      for (int i = 1; i < 17; i++)
-      {
-        isoOutHub.writeDigitalOutput(turnOn, HIGH);
-        sec = false;
-      }
-      turnOn++;
-      if (turnOn > 16)
-      {
-        up = false;
-      }
-    }
-  }
-  else if (up == false)
-  {
-
-    if (sec)
-    {
-      for (int i = 16; i > 0; i--)
-      {
-        isoOutHub.writeDigitalOutput(turnOn, LOW);
-        sec = false;
-      }
-      turnOn--;
-      if (turnOn == 0)
-      {
-        up = true;
-        turnOn = 1;
-      }
-    }
-  }
+  //isoOutHub.test(HIGH);
 }
 
 // put function definitions here:

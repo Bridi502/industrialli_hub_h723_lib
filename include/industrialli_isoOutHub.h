@@ -45,6 +45,7 @@ public:
     void getPowerLedsStaus(void);
     bool getOut1to8Status(void);
     bool getOut9to16Status(void);
+    void test(bool onOff);
 
 private:
     SPIClass *_spiPort;
@@ -74,6 +75,7 @@ private:
     uint8_t _qNum;
     bool _onOff = false;
     uint8_t _led;
+  
 };
 
 #endif

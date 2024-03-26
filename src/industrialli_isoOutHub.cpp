@@ -60,7 +60,7 @@ void industrialli_isoOutHubCtrl::getIsoOutLedsStatus(uint8_t led, uint8_t onOff)
     // Q7 -> LED18
     // Q8 -> LED19
 
-    switch (_led)
+switch (_led)
     {
     case 0: // Q1
         if (_onOff)
@@ -250,6 +250,10 @@ void industrialli_isoOutHubCtrl::getIsoOutLedsStatus(uint8_t led, uint8_t onOff)
     default:
         break;
     }
+
+
+
+    
 }
 
 void industrialli_isoOutHubCtrl::enableOutputs(void)//Habilita as saidas
@@ -305,3 +309,11 @@ bool industrialli_isoOutHubCtrl::getOut9to16Status(void)//Retorna verdadeiro par
         return false;
     }
 }
+
+void industrialli_isoOutHubCtrl::test(bool onOff){
+for(int i = 1; i < 17; i++){
+    writeDigitalOutput(i, onOff);
+}
+
+}
+
