@@ -84,11 +84,11 @@ void industrialli_digitalInputsHub::updateDigitalInputsLeds() // Atualiza o valo
         {
             if (_ledStatus[i] == 1)
             {
-                ledsCtrl.ledOn(4 + i); // NPN ativado
+                ledsCtrl.ledOff(4 + i); // NPN ativado
             }
             else
             {
-                ledsCtrl.ledOff(4 + i); // NPN desativado
+                ledsCtrl.ledOn(4 + i); // NPN desativado
             }
         }
     }
@@ -201,82 +201,82 @@ void industrialli_digitalInputsHub::beginDigitalInputCounting(uint8_t pin, bool 
     switch (_pin)
     {
     case 0:
-        if (_sensorType == 0) // PNP
+        if (_sensorType)//NPN
         {
             beginInterruptInputFalling_00();
         }
-        else // NPN
+        else //PNP
         {
             beginInterruptInputRising_00();
         }
 
         break;
     case 1:
-        if (_sensorType == 0) // PNP
+        if (_sensorType)
         {
             beginInterruptInputFalling_01();
         }
-        else // NPN
+        else
         {
             beginInterruptInputRising_01();
         }
         break;
     case 2:
-        if (_sensorType == 0) // PNP
+        if (_sensorType)
         {
             beginInterruptInputFalling_02();
         }
-        else // NPN
+        else
         {
             beginInterruptInputRising_02();
         }
         break;
     case 3:
-        if (_sensorType == 0) // PNP
+        if (_sensorType)
         {
             beginInterruptInputFalling_03();
         }
-        else // NPN
+        else
         {
             beginInterruptInputRising_03();
         }
         break;
     case 4:
-        if (_sensorType == 0) // PNP
+        if (_sensorType) 
         {
             beginInterruptInputFalling_04();
         }
-        else // NPN
+        else
         {
             beginInterruptInputRising_04();
         }
         break;
     case 5:
-        if (_sensorType == 0) // PNP
+        if (_sensorType)
         {
             beginInterruptInputFalling_05();
         }
-        else // NPN
+        else
         {
             beginInterruptInputRising_05();
         }
         break;
     case 6:
-        if (_sensorType == 0) // PNP
+        if (_sensorType)
         {
             beginInterruptInputFalling_06();
         }
-        else // NPN
+        else 
         {
             beginInterruptInputRising_06();
         }
         break;
     case 7:
-        if (_sensorType == 0) // PNP
+        if (_sensorType) 
         {
             beginInterruptInputFalling_07();
         }
-        else // NPN
+        else 
         {
             beginInterruptInputRising_07();
         }
